@@ -37,12 +37,14 @@ for p in openPorts:
  print(f"{p} ---> OPEN")
 
 #Verify if the host is UP before scanning target
-Targethost = args.target
-response = ping(Targethost)
-if response is None:
- Scan1000_CommonPorts()
-else:
+host = args.target
+response = ping(host)
+if not response:
  print("Unable to ping the host; it may be offline.")
+else:
+  print("Host is up.")
+  Scan1000_CommonPorts()
+
  
  
  
