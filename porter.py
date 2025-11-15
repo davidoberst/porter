@@ -3,6 +3,7 @@ import pyfiglet
 import argparse
 import json
 import time
+from ping3 import ping
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #create socket
 sock.settimeout(1)
@@ -21,17 +22,28 @@ with open("ports.json", "r") as f:
 
 openPorts=[]
 print(f"Searching for open ports in {args.target}...") 
-for x in data["common_ports"]:
- sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #create socket per port
- sock.settimeout(3)
- result = sock.connect_ex(((args.target) , int(x)))
- if result == 0:
-  openPorts.append(x) 
- sock.close()
+
+def Scan1000_CommonPorts():
+ for x in data["common_ports"]:
+  sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #create socket per port
+  sock.settimeout(3)
+  result = sock.connect_ex(((args.target) , int(x)))
+  if result == 0:
+   openPorts.append(x) 
+  sock.close()
  #RESULTS
 print(f"Scan ended, open ports : {len(openPorts)} ")
 for p in openPorts:
  print(f"{p} ---> OPEN")
+
+#Verify if the host is UP before scanning target
+Targethost = args.target
+response = ping(Targethost)
+if response is None:
+ Scan1000_CommonPorts()
+else:
+ print("Unable to ping the host; it may be offline.")
+ 
  
  
    
